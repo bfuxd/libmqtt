@@ -9,6 +9,10 @@ todo:
 4. 到底要不要广泛使用 stdint.h ? 我认为应该只在必要情况下使用(对数据宽度有严格要求的情况下)
    但是函数的参数或返回值一旦使用到 stdint.h 中的类型, 就会引发连锁限制...
 
+编译环境:
+MinGW-64
+https://github.com/niXman/mingw-builds-binaries/releases
+
 参考:
 [1] https://github.com/mcxiaoke/mqtt
 [2] https://github.com/fcvarela/liblwmqtt
