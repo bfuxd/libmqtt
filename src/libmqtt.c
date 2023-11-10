@@ -22,7 +22,7 @@ extern void mqttWakeUp(MqttBroker *broker);
 /**
  * @brief   解析数据包 长度字段中 剩余的字节数
  * @param   buf [in] 指向数据包的指针
- * @return  MQTT 固定包头长度字段中剩余的字节数, 1 - 4 取决于消息的长度
+ * @return  MQTT 固定包头长度字段中剩余的字节数, 1 ~ 4 取决于消息的长度
  */
 static uint8_t sizeofLenth(const uint8_t *buf)
 {
@@ -98,7 +98,7 @@ static int32_t packetCreate(uint8_t **pBuf, uint8_t type, int32_t remain, int32_
  * @brief   向报文写入带长度信息的负载数据
  * @param   buf [out] 指向数据包的指针
  * @param   offset [in/out] 数据偏移量
- * @param   data [int] 要写入的数据
+ * @param   data [in] 要写入的数据
  * @param   lenth [in] 数据长度
  */
 static void packetWrite(uint8_t *buf, int32_t *offset, const void *data, uint16_t lenth)
