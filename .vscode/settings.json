@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "stdlib.h": "c",
+        "pthread.h": "c",
+        "compare": "c",
+        "type_traits": "c",
+        "libmqtt.h": "c"
+    }
+}

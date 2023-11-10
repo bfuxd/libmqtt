@@ -1,0 +1,43 @@
+{
+    "version": "2.0.0",
+    //每次执行都启动一个新的控制台
+    "presentation": {
+        "reveal": "always",
+        "panel": "shared", //new",
+        "echo": true
+    },
+    //设置环境变量
+    "options": {
+        "env": {
+            "LOCAL_SRC_HOME": "${workspaceRoot}"
+        }
+    },
+    "type": "shell",
+    "problemMatcher": {
+        "owner": "vs_code",
+        "fileLocation": [
+            "relative",
+            "${workspaceRoot}"
+        ],
+        "pattern": {
+            "regexp": ".*(app/.*|project/.*):(\\d+):(\\d+):\\s+(warning|error):\\s+(.*)$",
+            "file": 1,
+            "line": 2,
+            "column": 3,
+            "severity": 4,
+            "message": 5
+        }
+    },
+    //任务列表
+    "tasks": [
+        {
+            "label": "Compile",
+            "command": "make",
+            "args": ["-j8"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
