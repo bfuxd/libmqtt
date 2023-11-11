@@ -10,6 +10,7 @@
                 "UNICODE",
                 "_UNICODE"
             ],
+            "compilerPath": "D:/ProgramFiles/mingw64/bin/gcc.exe",
             "cStandard": "c11",
             "cppStandard": "gnu++14",
             "configurationProvider": "ms-vscode.makefile-tools"

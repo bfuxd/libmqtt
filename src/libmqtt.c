@@ -527,10 +527,10 @@ int mqttThread(MqttBroker *broker)
         if((broker->waitType == MQTTParseMessageType(broker->recvBuf) && broker->waitParam == mqttMsgID(broker->recvBuf)) \
            || (MQTT_MSG_CONNACK == broker->waitType))
         {
-            broker->waitType = 0;
             // broker->waitType 为 MQTT_MSG_CONNACK 时输出服务器返回的响应
             if(MQTT_MSG_CONNACK == broker->waitType)
                 broker->waitParam = broker->recvBuf[3];
+            broker->waitType = 0;
             mqttWakeUp(broker);
         }
         // 收到推送
