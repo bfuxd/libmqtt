@@ -42,13 +42,20 @@ void term(int sig)
 }
 
 // mqtt 收到推送的回调
-void recvCB(char *topic, char *msg, uint32_t msgLen)
+void recvCB(uint8_t *recvBuf)
 {
     HANDLE consolehwnd;
+    char *string;
+    int32_t len;
 
     consolehwnd = GetStdHandle(STD_OUTPUT_HANDLE);
-    SetConsoleTextAttribute(consolehwnd, FOREGROUND_GREEN); // 设置字体颜色
-    printf("\"%s\" 发来 %dB\n%s\n", topic, msgLen, msg);
+    SetConsoleTextAttribute(consolehwnd, FOREGROUND_BLUE); // 设置字体颜色
+    len = mqttGetTopic(recvBuf, (const uint8_t**)&string);
+    printf("\"%.*s\" 发来 ", len, string);
+    len = mqttGetMsg(recvBuf, (const uint8_t**)&string);
+    printf("%d 字节\n", len);
+    SetConsoleTextAttribute(consolehwnd, FOREGROUND_GREEN);
+    printf("%.*s\n", len, string);
     SetConsoleTextAttribute(consolehwnd, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 

@@ -27,7 +27,7 @@ typedef struct
 {
     void *socket;
     uint8_t *recvBuf;
-    void (*recvCB)(char *topic, char *msg, uint32_t msgLen);
+    void (*recvCB)(uint8_t *recvBuf);
     const char *clientid;
     const char *username;
     const char *password;

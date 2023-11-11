@@ -511,9 +511,6 @@ static int32_t mqttGetPacket(MqttBroker *broker)
 
 int mqttThread(MqttBroker *broker)
 {
-    int32_t len;
-    char *topic, *msg;
-    const uint8_t *pTopic, *pMsg;
     int ret;
 
     // 接收一个完整数据包
@@ -535,23 +532,9 @@ int mqttThread(MqttBroker *broker)
         // 收到推送
         if(MQTTParseMessageType(broker->recvBuf) == MQTT_MSG_PUBLISH)
         {
-            len = mqttGetTopic(broker->recvBuf, &pTopic);
-            topic = malloc(len + 1);
-            if(topic)
-            {
-                memcpy(topic, pTopic, len);
-                topic[len] = '\0'; // for printf
-            }
-            len = mqttGetMsg(broker->recvBuf, &pMsg);
-            msg = malloc(len + 1);
-            if(msg)
-            {
-                memcpy(msg, pMsg, len);
-                msg[len] = '\0'; // for printf
-            }
             // 收到推送, 调用回调函数 (过滤 qos = 2 时的重复消息)
             if(mqttMsgID(broker->recvBuf) != broker->seq2)
-                broker->recvCB(topic, msg, len);
+                broker->recvCB(broker->recvBuf);
             // Qos 1 需要回复 PUBACK
             if(MQTTParseMessageQos(broker->recvBuf) == 1)
                 mqttPubRetuen(broker, MQTT_MSG_PUBACK, mqttMsgID(broker->recvBuf));
@@ -561,10 +544,6 @@ int mqttThread(MqttBroker *broker)
                 broker->seq2 = mqttMsgID(broker->recvBuf);
                 mqttPubRetuen(broker, MQTT_MSG_PUBREC, mqttMsgID(broker->recvBuf));
             }
-            if(topic)
-                free(topic);
-            if(msg)
-                free(msg);
         }
         // Qos 2 第二步回复 PUBCOMP
         if(MQTTParseMessageType(broker->recvBuf) == MQTT_MSG_PUBREL)
