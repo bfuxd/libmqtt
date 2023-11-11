@@ -346,7 +346,7 @@ MqttRet mqttPublish(MqttBroker *broker, const char *topic, const char *msg, uint
                     broker->waitParam = broker->seq;
                     for(offset = 0; offset < MQTT_RETRY; offset++)
                     {
-                        if(mqttPubRetuen(broker, MQTT_MSG_PUBREL, broker->seq))
+                        if(mqttPubRetuen(broker, MQTT_MSG_PUBREL | MQTT_QOS1_FLAG, broker->seq))
                         {
                             ret = MQTT_SEND_ERR;
                             break;
@@ -377,7 +377,7 @@ MqttRet mqttPublish(MqttBroker *broker, const char *topic, const char *msg, uint
 MqttRet mqttPubRetuen(MqttBroker *broker, uint8_t type, uint16_t msgID)
 {
     uint8_t packet[] = {
-        type | MQTT_QOS1_FLAG,
+        type,
         0x02, // 剩余长度
         msgID >> 8,
         msgID & 0xFF

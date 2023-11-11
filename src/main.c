@@ -66,7 +66,7 @@ void* recvPacket(void *param)
     {
         if(mqttThread(&broker) <= 0)
         {
-            printf("socket closed (%d)", WSAGetLastError());
+            printf("socket closed (%d)\n", WSAGetLastError());
             run = 0;
             WSACleanup();
             exit(0);
@@ -92,7 +92,7 @@ int main(int argc, char** argv)
     InitializeConditionVariable(&conditionVar);
 
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_addr.s_addr = inet_addr("39.105.52.180");
+    serverAddr.sin_addr.s_addr = inet_addr("192.168.3.128");
     serverAddr.sin_port = htons(1883);
     tcpc = socket(AF_INET, SOCK_STREAM, 0);
     if(INVALID_SOCKET == tcpc)
