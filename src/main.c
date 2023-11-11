@@ -32,17 +32,6 @@ static const char* const szMqttRet[] = {
     "no response"
 };
 
-// mqtt 接收数据并进行必要响应
-void* recvPacket(void *param)
-{
-    while(run)
-    {
-        if(mqttThread(&broker) <= 0)
-            run = 0;
-    }
-    return NULL;
-}
-
 // Ctrl+C 处理
 void term(int sig)
 {
@@ -50,14 +39,33 @@ void term(int sig)
     printf("Goodbye!\n");
     mqttDisconnect(&broker);
     closesocket((SOCKET)broker.socket);
-    WSACleanup();
-    exit(0);
 }
 
 // mqtt 收到推送的回调
 void recvCB(char *topic, char *msg, uint32_t msgLen)
 {
-    printf("\033[1;32m\"%s\" 发来 %dB\n%s\033[0m\n", topic, msgLen, msg);
+    HANDLE consolehwnd;
+
+    consolehwnd = GetStdHandle(STD_OUTPUT_HANDLE);
+    SetConsoleTextAttribute(consolehwnd, FOREGROUND_GREEN); // 设置字体颜色
+    printf("\"%s\" 发来 %dB\n%s\n", topic, msgLen, msg);
+    SetConsoleTextAttribute(consolehwnd, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
+}
+
+// mqtt 接收数据并进行必要响应
+void* recvPacket(void *param)
+{
+    while(run)
+    {
+        if(mqttThread(&broker) <= 0)
+        {
+            printf("socket closed (%d)", WSAGetLastError());
+            run = 0;
+            WSACleanup();
+            exit(0);
+        }
+    }
+    return NULL;
 }
 
 int main(int argc, char** argv)
@@ -66,18 +74,19 @@ int main(int argc, char** argv)
     SOCKET tcpc;
     struct sockaddr_in serverAddr;
 
+    if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
+    {
+        printf("TCP/IP protocol error(%d)\n", WSAGetLastError());
+        WSACleanup();
+        return -1;
+    }
+
     InitializeCriticalSection(&criticalSection);
     InitializeConditionVariable(&conditionVar);
 
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_addr.s_addr = inet_addr("39.105.52.180");
     serverAddr.sin_port = htons(1883);
-
-    if(WSAStartup(MAKEWORD(2, 2), &wsaData) != 0)
-    {
-        WSACleanup();
-        return -1;
-    }
     tcpc = socket(AF_INET, SOCK_STREAM, 0);
     if(INVALID_SOCKET == tcpc)
     {
@@ -121,8 +130,7 @@ int main(int argc, char** argv)
     while(run)
     {
         Sleep(broker.alive * 1000);
-        printf("Timeout! Sending ping...\n");
-        mqttPing(&broker);
+        printf("Timeout! Send ping %s\n", szMqttRet[mqttPing(&broker)]);
     }
     return 0;
 }
