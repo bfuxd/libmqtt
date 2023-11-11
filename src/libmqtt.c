@@ -228,6 +228,7 @@ MqttRet mqttConnect(MqttBroker *broker)
     packetWrite(packet, &offset, "MQTT", 4);
     packet[offset++] = 0x04; // 协议版本 3.1.1
     // 连接标志字节
+    packet[offset] = 0;
     if(usernamelen)
         packet[offset] |= MQTT_USERNAME_FLAG;
     if(passwordlen)
@@ -504,7 +505,10 @@ static int32_t mqttGetPacket(MqttBroker *broker)
     for(; total < packetlen; total += lenth)
     {
         if((lenth = mqttRecv(broker->socket, (char*)(broker->recvBuf) + total, packetlen - total)) <= 0)
+        {
+            free(broker->recvBuf);
             return lenth;
+        }
     }
     return total;
 }
